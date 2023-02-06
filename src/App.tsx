@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+
+import { Todo } from './types';
+
 import './App.css';
+import TodoList from './components/TodoList/TodoList';
+import NewTodoForms from './components/NewTodoForms/NewTodoForms';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+   const [todos, setTodos] = useState<Todo[]>([]);
+
+   useEffect(() => {
+      fetch('https://jsonplaceholder.typicode.com/todos')
+         .then((res) => res.json())
+         .then((data: Todo[]) => setTodos(data));
+   }, []);
+
+   const addTodo = (text: string) => {
+      const newTodo = {
+         id: new Date().toString(),
+         title: text,
+         completed: false,
+      };
+      setTodos([newTodo, ...todos]);
+   };
+
+   return (
+      <div className="App">
+         <NewTodoForms handleClick={addTodo} />
+         <TodoList todos={todos} />
+      </div>
+   );
 }
 
 export default App;
